@@ -532,7 +532,26 @@
     border-radius:10px;
     display:block;
   }
+  .modal-actions{
+    display:flex;
+    gap:10px;
+    margin-top:16px;
+  }
+  .modal-actions .btn-delete{margin-top:0;}
+  .btn-edit{
+    flex:1;
+    background:#eef3ef;
+    color:var(--holiday);
+    border:1px solid #cfe0d3;
+    border-radius:8px;
+    padding:11px;
+    font-size:14px;
+    font-weight:700;
+    cursor:pointer;
+  }
+  .btn-edit:hover{background:#e2ece4;}
   .btn-delete{
+    flex:1;
     margin-top:16px;
     width:100%;
     background:#fdf0ee;
@@ -594,7 +613,7 @@
     color:#999;
     margin-bottom:5px;
   }
-  .form-row input{
+  .form-row input, .form-row textarea{
     width:100%;
     padding:10px 12px;
     border:1px solid var(--line);
@@ -603,6 +622,11 @@
     font-family:inherit;
     background:#fff;
     color:var(--ink);
+  }
+  .form-row textarea{
+    resize:vertical;
+    min-height:70px;
+    line-height:1.4;
   }
   .form-row-pair{
     display:flex;
@@ -881,6 +905,7 @@ let eventsCol = null;
 let fsAddDoc = null;
 let fsDeleteDoc = null;
 let fsDoc = null;
+let fsUpdateDoc = null;
 let syncReady = false;
 
 async function initFirebaseSync(){
@@ -889,7 +914,7 @@ async function initFirebaseSync(){
       import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"),
       import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js")
     ]);
-    const { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot } = firestoreMod;
+    const { getFirestore, collection, addDoc, deleteDoc, doc, updateDoc, onSnapshot } = firestoreMod;
 
     const fbApp = initializeApp(firebaseConfig);
     db = getFirestore(fbApp);
@@ -897,6 +922,7 @@ async function initFirebaseSync(){
     fsAddDoc = addDoc;
     fsDeleteDoc = deleteDoc;
     fsDoc = doc;
+    fsUpdateDoc = updateDoc;
 
     onSnapshot(eventsCol, (snapshot) => {
       customEvents = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -918,7 +944,10 @@ function buildMapSrc(info){
   return `https://maps.google.com/maps?q=${encodeURIComponent(info.mapQuery)}&z=17&output=embed`;
 }
 
+let currentModalEvent = null;
+
 function openModal(c){
+  currentModalEvent = c;
   const info = c.custom ? {} : (courseInfo[c.course] || {});
   const overlay = document.getElementById('modalOverlay');
   const card = document.getElementById('modalCard');
@@ -932,8 +961,14 @@ function openModal(c){
   const recurBlock = info.days
     ? `<div class="m-room">🔁 Meets ${info.days}</div>`
     : '';
-  const deleteBlock = c.custom
-    ? `<button class="btn-delete" onclick="deleteCustomEvent('${c.id}')">Delete this event</button>`
+  const notesBlock = (c.custom && c.notes)
+    ? `<span class="m-desc-label">Notes</span><div class="m-desc">${escapeHtml(c.notes)}</div>`
+    : '';
+  const actionButtons = c.custom
+    ? `<div class="modal-actions">
+         <button class="btn-edit" onclick="openEditEventModal()">Edit</button>
+         <button class="btn-delete" onclick="deleteCustomEvent('${c.id}')">Delete</button>
+       </div>`
     : '';
   const dateLabel = c.dateObj ? fmtDateLong(c.dateObj) : '';
   card.innerHTML = `
@@ -949,10 +984,16 @@ function openModal(c){
       ${recurBlock}
       ${descBlock}
       ${mapBlock}
-      ${deleteBlock}
+      ${notesBlock}
+      ${actionButtons}
     </div>
   `;
   overlay.classList.add('open');
+}
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML.replace(/\n/g, '<br>');
 }
 function closeModal(){
   document.getElementById('modalOverlay').classList.remove('open');
@@ -970,48 +1011,94 @@ function deleteCustomEvent(id){
   fsDeleteDoc(fsDoc(db, 'scheduleEvents', id)).catch(err => console.error('Delete failed:', err));
 }
 
-// ============ ADD EVENT MODAL ============
+// ============ ADD / EDIT EVENT MODAL ============
+let editingEventId = null;
+
 function openAddEventModal(){
+  editingEventId = null;
+  renderEventForm({
+    heading: 'Add an Event',
+    subheading: 'Study sessions, work shifts, activities, anything',
+    date: ymd(currentWeekStart),
+    start: '15:00',
+    end: '16:00',
+    location: '',
+    notes: '',
+    saveLabel: 'Add to Schedule'
+  });
+}
+
+function openEditEventModal(){
+  if(!currentModalEvent || !currentModalEvent.custom) return;
+  const c = currentModalEvent;
+  editingEventId = c.id;
+  closeModal();
+  renderEventForm({
+    heading: 'Edit Event',
+    subheading: 'Update the details below',
+    title: c.title || '',
+    date: c.date || '',
+    start: minToTimeStr(c.start),
+    end: minToTimeStr(c.end),
+    location: c.meta || '',
+    notes: c.notes || '',
+    saveLabel: 'Save Changes'
+  });
+}
+
+function minToTimeStr(min){
+  if(min === undefined || min === null) return '';
+  const h = Math.floor(min/60);
+  const m = min % 60;
+  return String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0');
+}
+
+function renderEventForm(opts){
   const overlay = document.getElementById('addModalOverlay');
   const card = document.getElementById('addModalCard');
-  const defaultDate = ymd(currentWeekStart);
   card.innerHTML = `
     <div class="modal-banner" style="background:var(--custom)">
       <button class="modal-close" onclick="closeAddModal()" aria-label="Close">✕</button>
-      <span class="m-time">Add an Event</span>
-      <span class="m-days">Study sessions, work shifts, activities, anything</span>
+      <span class="m-time">${opts.heading}</span>
+      <span class="m-days">${opts.subheading}</span>
     </div>
     <div class="modal-body">
       <div class="form-error" id="addFormError">Please fill in a title, date, and valid start/end times.</div>
       <div class="form-row">
         <label for="ev-title">Title</label>
-        <input type="text" id="ev-title" placeholder="e.g. Study session, Work shift">
+        <input type="text" id="ev-title" placeholder="e.g. Study session, Work shift" value="${(opts.title || '').replace(/"/g,'&quot;')}">
       </div>
       <div class="form-row">
         <label for="ev-date">Date</label>
-        <input type="date" id="ev-date" value="${defaultDate}">
+        <input type="date" id="ev-date" value="${opts.date}">
       </div>
       <div class="form-row-pair">
         <div class="form-row">
           <label for="ev-start">Start time</label>
-          <input type="time" id="ev-start" value="15:00">
+          <input type="time" id="ev-start" value="${opts.start}">
         </div>
         <div class="form-row">
           <label for="ev-end">End time</label>
-          <input type="time" id="ev-end" value="16:00">
+          <input type="time" id="ev-end" value="${opts.end}">
         </div>
       </div>
       <div class="form-row">
         <label for="ev-location">Location (optional)</label>
-        <input type="text" id="ev-location" placeholder="e.g. Moody Library, 2nd floor">
+        <input type="text" id="ev-location" placeholder="e.g. Moody Library, 2nd floor" value="${(opts.location || '').replace(/"/g,'&quot;')}">
       </div>
-      <button class="btn-save" onclick="saveNewEvent()">Add to Schedule</button>
+      <div class="form-row">
+        <label for="ev-notes">Notes (optional)</label>
+        <textarea id="ev-notes" placeholder="Anything worth remembering — what to bring, who to meet, reminders...">${escapeHtml(opts.notes || '')}</textarea>
+      </div>
+      <button class="btn-save" onclick="saveNewEvent()">${opts.saveLabel}</button>
     </div>
   `;
   overlay.classList.add('open');
 }
+
 function closeAddModal(){
   document.getElementById('addModalOverlay').classList.remove('open');
+  editingEventId = null;
 }
 document.getElementById('addModalOverlay').addEventListener('click', (e) => {
   if(e.target.id === 'addModalOverlay') closeAddModal();
@@ -1033,6 +1120,7 @@ function saveNewEvent(){
   const startMin = timeStrToMin(document.getElementById('ev-start').value);
   const endMin = timeStrToMin(document.getElementById('ev-end').value);
   const location = document.getElementById('ev-location').value.trim();
+  const notes = document.getElementById('ev-notes').value.trim();
   const errEl = document.getElementById('addFormError');
 
   if(!title || !dateStr || startMin === null || endMin === null || endMin <= startMin){
@@ -1041,7 +1129,7 @@ function saveNewEvent(){
   }
   errEl.style.display = 'none';
 
-  const newEvent = {
+  const eventData = {
     date: dateStr,
     start: startMin,
     end: endMin,
@@ -1049,19 +1137,29 @@ function saveNewEvent(){
     custom: true,
     title: title,
     meta: location,
+    notes: notes,
     time: `${fmtMin(startMin)} – ${fmtMin(endMin)}`
   };
 
+  const wasEditing = editingEventId;
   closeAddModal();
 
   if(!syncReady || !db){
     alert("Can't sync right now — check your internet connection and try again.");
     return;
   }
-  fsAddDoc(eventsCol, newEvent).catch(err => {
-    console.error('Save failed:', err);
-    alert('Could not save the event — check your internet connection and try again.');
-  });
+
+  if(wasEditing){
+    fsUpdateDoc(fsDoc(db, 'scheduleEvents', wasEditing), eventData).catch(err => {
+      console.error('Update failed:', err);
+      alert('Could not save your changes — check your internet connection and try again.');
+    });
+  } else {
+    fsAddDoc(eventsCol, eventData).catch(err => {
+      console.error('Save failed:', err);
+      alert('Could not save the event — check your internet connection and try again.');
+    });
+  }
 }
 
 // ============ WEEK DATA ============
@@ -1411,6 +1509,7 @@ document.addEventListener('keydown', (e) => {
 
 window.openHealthModal = openHealthModal;
 window.openAddEventModal = openAddEventModal;
+window.openEditEventModal = openEditEventModal;
 window.closeAddModal = closeAddModal;
 window.saveNewEvent = saveNewEvent;
 window.closeModal = closeModal;
