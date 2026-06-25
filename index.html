@@ -164,12 +164,12 @@
   }
   .grid{
     display:grid;
-    grid-template-columns:70px repeat(5, minmax(150px, 1fr));
+    grid-template-columns:65px repeat(7, minmax(125px, 1fr));
     border:1px solid var(--line);
     border-radius:12px;
     overflow:hidden;
     background:var(--card-bg);
-    min-width:760px;
+    min-width:940px;
   }
   .head-cell{
     background:var(--ink);
@@ -664,8 +664,6 @@
     </div>
   </div>
 
-  <div class="week-banner" id="weekBanner" style="display:none;"></div>
-
   <!-- ============ DESKTOP / TABLET GRID ============ -->
   <div class="grid-scroll">
     <div class="grid">
@@ -675,6 +673,8 @@
       <div class="head-cell" id="head-wed"></div>
       <div class="head-cell" id="head-thu"></div>
       <div class="head-cell" id="head-fri"></div>
+      <div class="head-cell" id="head-sat"></div>
+      <div class="head-cell" id="head-sun"></div>
 
       <div class="time-col"><div class="body-row" id="timeRow"></div></div>
       <div class="day-col" id="col-mon"><div class="body-row" id="mon"></div></div>
@@ -682,6 +682,8 @@
       <div class="day-col" id="col-wed"><div class="body-row" id="wed"></div></div>
       <div class="day-col" id="col-thu"><div class="body-row" id="thu"></div></div>
       <div class="day-col" id="col-fri"><div class="body-row" id="fri"></div></div>
+      <div class="day-col" id="col-sat"><div class="body-row" id="sat"></div></div>
+      <div class="day-col" id="col-sun"><div class="body-row" id="sun"></div></div>
     </div>
   </div>
   <div class="scroll-hint">Swipe to see all days →</div>
@@ -741,11 +743,11 @@ function addDays(date, n){ const d = new Date(date); d.setDate(d.getDate() + n);
 function fmtDateShort(date){ return MONTH_ABBR[date.getMonth()] + ' ' + date.getDate(); }
 function fmtDateLong(date){ return WEEKDAY_FULL[date.getDay()] + ', ' + MONTH_FULL[date.getMonth()] + ' ' + date.getDate() + ', ' + date.getFullYear(); }
 function fmtWeekRange(weekMonday){
-  const fri = addDays(weekMonday, 4);
-  if(weekMonday.getMonth() === fri.getMonth()){
-    return MONTH_ABBR[weekMonday.getMonth()] + ' ' + weekMonday.getDate() + '–' + fri.getDate() + ', ' + weekMonday.getFullYear();
+  const sun = addDays(weekMonday, 6);
+  if(weekMonday.getMonth() === sun.getMonth()){
+    return MONTH_ABBR[weekMonday.getMonth()] + ' ' + weekMonday.getDate() + '–' + sun.getDate() + ', ' + weekMonday.getFullYear();
   }
-  return MONTH_ABBR[weekMonday.getMonth()] + ' ' + weekMonday.getDate() + ' – ' + MONTH_ABBR[fri.getMonth()] + ' ' + fri.getDate() + ', ' + fri.getFullYear();
+  return MONTH_ABBR[weekMonday.getMonth()] + ' ' + weekMonday.getDate() + ' – ' + MONTH_ABBR[sun.getMonth()] + ' ' + sun.getDate() + ', ' + sun.getFullYear();
 }
 
 const SEMESTER_FIRST_MONDAY = new Date(2026, 7, 24);  // Aug 24, 2026 (Fall start)
@@ -764,23 +766,23 @@ const specialDates = [
   // ---- Fall 2026 ----
   { start:'2026-08-24', end:'2026-08-24', label:'First Day of Classes', short:'First Day of Classes', icon:'🎓', noClasses:false },
   { start:'2026-09-07', end:'2026-09-07', label:'Labor Day Holiday — No Classes', short:'Labor Day', icon:'🎉', noClasses:true, highlight:true },
-  { start:'2026-09-12', end:'2026-09-12', label:'Football vs. Prairie View A&M (Home)', short:'Football vs. Prairie View A&M', icon:'🏈', noClasses:false, weekendOnly:true, highlight:true },
-  { start:'2026-09-19', end:'2026-09-19', label:'Family Weekend & Football vs. Louisiana Tech (Home)', short:'Family Weekend', icon:'👪', noClasses:false, weekendOnly:true, highlight:true },
-  { start:'2026-09-26', end:'2026-09-26', label:'Football vs. Colorado (Home)', short:'Football vs. Colorado', icon:'🏈', noClasses:false, weekendOnly:true, highlight:true },
+  { start:'2026-09-12', end:'2026-09-12', label:'Football vs. Prairie View A&M (Home)', short:'Football vs. Prairie View A&M', icon:'🏈', noClasses:false, highlight:true },
+  { start:'2026-09-19', end:'2026-09-19', label:'Family Weekend & Football vs. Louisiana Tech (Home)', short:'Family Weekend', icon:'👪', noClasses:false, highlight:true },
+  { start:'2026-09-26', end:'2026-09-26', label:'Football vs. Colorado (Home)', short:'Football vs. Colorado', icon:'🏈', noClasses:false, highlight:true },
   { start:'2026-10-09', end:'2026-10-09', label:'Fall Break — No Classes', short:'Fall Break', icon:'🍂', noClasses:true, highlight:true },
-  { start:'2026-10-17', end:'2026-10-17', label:'Football vs. TCU (Home)', short:'Football vs. TCU', icon:'🏈', noClasses:false, weekendOnly:true, highlight:true },
+  { start:'2026-10-17', end:'2026-10-17', label:'Football vs. TCU (Home)', short:'Football vs. TCU', icon:'🏈', noClasses:false, highlight:true },
   { start:'2026-10-26', end:'2026-10-26', label:'Last Day to Drop a Class', short:'Last Day to Drop', icon:'⚠️', noClasses:false },
-  { start:'2026-11-07', end:'2026-11-07', label:'Homecoming & Football vs. Iowa State (Home)', short:'Homecoming', icon:'🐻', noClasses:false, weekendOnly:true, highlight:true },
-  { start:'2026-11-21', end:'2026-11-21', label:'Football vs. Texas Tech (Home)', short:'Football vs. Texas Tech', icon:'🏈', noClasses:false, weekendOnly:true, highlight:true },
+  { start:'2026-11-07', end:'2026-11-07', label:'Homecoming & Football vs. Iowa State (Home)', short:'Homecoming', icon:'🐻', noClasses:false, highlight:true },
+  { start:'2026-11-21', end:'2026-11-21', label:'Football vs. Texas Tech (Home)', short:'Football vs. Texas Tech', icon:'🏈', noClasses:false, highlight:true },
   { start:'2026-11-23', end:'2026-11-29', label:'Thanksgiving Break — No Classes', short:'Thanksgiving Break', icon:'🦃', noClasses:true, highlight:true },
   { start:'2026-12-09', end:'2026-12-09', label:'Last Day of Classes (Fall)', short:'Last Day of Fall Classes', icon:'📚', noClasses:false, highlight:true },
   { start:'2026-12-10', end:'2026-12-10', label:'Study Day — No Classes', short:'Study Day', icon:'📖', noClasses:true },
   { start:'2026-12-11', end:'2026-12-16', label:'Final Exams', short:'Final Exams', icon:'✏️', noClasses:true },
 
   // ---- Sorority Recruitment (between semesters) ----
-  { start:'2027-01-10', end:'2027-01-10', label:'Sorority Recruitment: PNM Orientation', short:'Recruitment Orientation', icon:'🎀', noClasses:false, weekendOnly:true },
+  { start:'2027-01-10', end:'2027-01-10', label:'Sorority Recruitment: PNM Orientation', short:'Recruitment Orientation', icon:'🎀', noClasses:false },
   { start:'2027-01-11', end:'2027-01-15', label:'Sorority Recruitment Rounds', short:'Recruitment Rounds', icon:'🎀', noClasses:false },
-  { start:'2027-01-16', end:'2027-01-16', label:'Bid Day! 🎉', short:'Bid Day', icon:'🎀', noClasses:false, weekendOnly:true, highlight:true },
+  { start:'2027-01-16', end:'2027-01-16', label:'Bid Day! 🎉', short:'Bid Day', icon:'🎀', noClasses:false, highlight:true },
 
   // ---- Spring 2027 ----
   { start:'2027-01-18', end:'2027-01-18', label:'MLK Holiday — No Classes', short:'MLK Day', icon:'🎉', noClasses:true, highlight:true },
@@ -790,19 +792,14 @@ const specialDates = [
   { start:'2027-03-26', end:'2027-03-29', label:'Easter Holidays — No Classes', short:'Easter Break', icon:'🐣', noClasses:true, highlight:true },
   { start:'2027-04-06', end:'2027-04-06', label:'Diadeloso — No Classes', short:'Diadeloso', icon:'🎉', noClasses:true, highlight:true },
   { start:'2027-04-08', end:'2027-04-08', label:'Last Day to Drop / Withdraw', short:'Last Day to Drop', icon:'⚠️', noClasses:false },
-  { start:'2027-04-10', end:'2027-04-10', label:'Asynchronous Online Day (classes meet online, follows Monday schedule)', short:'Async Online Day', icon:'📡', noClasses:false, weekendOnly:true },
+  { start:'2027-04-10', end:'2027-04-10', label:'Asynchronous Online Day (classes meet online, follows Monday schedule)', short:'Async Online Day', icon:'📡', noClasses:false },
   { start:'2027-05-05', end:'2027-05-05', label:'Last Day of Classes (Spring)', short:'Last Day of Spring Classes', icon:'📚', noClasses:false, highlight:true },
   { start:'2027-05-06', end:'2027-05-06', label:'Study Day — No Classes', short:'Study Day', icon:'📖', noClasses:true },
   { start:'2027-05-07', end:'2027-05-12', label:'Final Exams', short:'Final Exams', icon:'✏️', noClasses:true },
 ];
 
 function specialsForDate(dateStr){
-  return specialDates.filter(s => !s.weekendOnly && dateStr >= s.start && dateStr <= s.end);
-}
-function specialsForWeek(weekMonday){
-  const weekStart = ymd(weekMonday);
-  const weekEnd = ymd(addDays(weekMonday, 6));
-  return specialDates.filter(s => !(s.end < weekStart || s.start > weekEnd));
+  return specialDates.filter(s => dateStr >= s.start && dateStr <= s.end);
 }
 
 const classes = [
@@ -861,7 +858,7 @@ const courseInfo = {
   }
 };
 
-const dayOrder = ['mon','tue','wed','thu','fri'];
+const dayOrder = ['mon','tue','wed','thu','fri','sat','sun'];
 
 // ============ CUSTOM EVENTS (synced across devices via Firebase Firestore) ============
 const firebaseConfig = {
@@ -1137,19 +1134,6 @@ function renderWeekNav(weekInfo){
   document.getElementById('weekLabel').textContent = fmtWeekRange(currentWeekStart);
   document.getElementById('prevWeekBtn').disabled = currentWeekStart <= SEMESTER_FIRST_MONDAY;
   document.getElementById('nextWeekBtn').disabled = currentWeekStart >= SEMESTER_LAST_MONDAY;
-
-  const weekSpecials = specialsForWeek(currentWeekStart);
-  const weekendOnes = weekSpecials.filter(s => s.weekendOnly);
-  const bannerEl = document.getElementById('weekBanner');
-  if(weekendOnes.length > 0){
-    bannerEl.style.display = 'block';
-    bannerEl.innerHTML = weekendOnes.map(s => {
-      const d = parseYMD(s.start);
-      return `${s.icon} ${s.label} — ${WEEKDAY_ABBR[d.getDay()]}, ${fmtDateShort(d)}`;
-    }).join(' &nbsp;·&nbsp; ');
-  } else {
-    bannerEl.style.display = 'none';
-  }
 }
 
 function renderGrid(weekInfo){
