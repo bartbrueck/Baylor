@@ -645,11 +645,8 @@ const dayNames = {mon:'Monday', tue:'Tuesday', wed:'Wednesday', thu:'Thursday', 
 const dayOrder = ['mon','tue','wed','thu','fri'];
 
 // ============ CUSTOM EVENTS (synced across devices via Firebase Firestore) ============
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {
-  getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
+// Loaded dynamically (not as a top-level import) so that if this network request
+// is ever blocked, slow, or fails, the core schedule below still renders normally.
 const firebaseConfig = {
   apiKey: "AIzaSyCUMZoownxQTqmGuRtmxS9berUiqRBKf1c",
   authDomain: "baylor-1b695.firebaseapp.com",
@@ -660,19 +657,41 @@ const firebaseConfig = {
   measurementId: "G-3923RS38ML"
 };
 
-const fbApp = initializeApp(firebaseConfig);
-const db = getFirestore(fbApp);
-const eventsCol = collection(db, 'scheduleEvents');
-
 let customEvents = [];
+let db = null;
+let eventsCol = null;
+let fsAddDoc = null;
+let fsDeleteDoc = null;
+let fsDoc = null;
+let syncReady = false;
 
-// Live sync: any add/delete from any device updates everyone's view automatically.
-onSnapshot(eventsCol, (snapshot) => {
-  customEvents = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-  renderAll();
-}, (err) => {
-  console.error('Firestore sync error:', err);
-});
+async function initFirebaseSync(){
+  try{
+    const [{ initializeApp }, firestoreMod] = await Promise.all([
+      import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"),
+      import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js")
+    ]);
+    const { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot } = firestoreMod;
+
+    const fbApp = initializeApp(firebaseConfig);
+    db = getFirestore(fbApp);
+    eventsCol = collection(db, 'scheduleEvents');
+    fsAddDoc = addDoc;
+    fsDeleteDoc = deleteDoc;
+    fsDoc = doc;
+
+    onSnapshot(eventsCol, (snapshot) => {
+      customEvents = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      syncReady = true;
+      renderAll();
+    }, (err) => {
+      console.error('Firestore sync error:', err);
+    });
+  } catch(err){
+    console.warn('Live sync unavailable (Firebase failed to load):', err);
+    syncReady = false;
+  }
+}
 
 function getAllEvents(){
   return classes.concat(customEvents);
@@ -738,7 +757,11 @@ document.getElementById('modalOverlay').addEventListener('click', (e) => {
 
 function deleteCustomEvent(id){
   closeModal();
-  deleteDoc(doc(db, 'scheduleEvents', id)).catch(err => console.error('Delete failed:', err));
+  if(!syncReady || !db){
+    alert("Can't sync right now — check your internet connection and try again.");
+    return;
+  }
+  fsDeleteDoc(fsDoc(db, 'scheduleEvents', id)).catch(err => console.error('Delete failed:', err));
   // UI updates automatically via the onSnapshot listener once the delete syncs.
 }
 
@@ -829,8 +852,14 @@ function saveNewEvent(){
     time: `${fmtMin(startMin)} – ${fmtMin(endMin)}`
   };
 
+  if(!syncReady || !db){
+    closeAddModal();
+    alert("Can't sync right now — check your internet connection and try again.");
+    return;
+  }
+
   closeAddModal();
-  addDoc(eventsCol, newEvent).catch(err => {
+  fsAddDoc(eventsCol, newEvent).catch(err => {
     console.error('Save failed:', err);
     alert('Could not save the event — check your internet connection and try again.');
   });
@@ -961,6 +990,7 @@ function renderAll(){
 }
 
 renderAll();
+initFirebaseSync();
 
 // ============ MAP LINKS: Apple Maps on iOS, Google Maps elsewhere ============
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
