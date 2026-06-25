@@ -13,8 +13,8 @@
     --ger:#2f8f7f;
     --jou:#d9743a;
     --mth:#3a6ea5;
+    --custom:#9a8c4f;
     --card-bg:#ffffff;
-    --gap-bg:#ece8dc;
   }
   *{box-sizing:border-box;}
   html{font-size:16px;}
@@ -69,67 +69,20 @@
     color:var(--ink);
     text-decoration:none;
     transition:background 0.15s ease, transform 0.1s ease;
+    font-family:inherit;
+    cursor:pointer;
   }
   .quick-link:hover{
     background:#efece3;
     transform:translateY(-1px);
   }
+  .quick-link.add-btn{
+    background:var(--ink);
+    color:#fff;
+    border-color:var(--ink);
+  }
+  .quick-link.add-btn:hover{background:#34392f;}
   .quick-link .pin{font-size:14px;}
-  .quick-link{
-    font-family:inherit;
-    cursor:pointer;
-  }
-  button.quick-link{
-    border:1px solid var(--line);
-  }
-
-  .health-row{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    padding:13px 0;
-    border-bottom:1px solid var(--line);
-    text-decoration:none;
-    color:var(--ink);
-  }
-  .health-row:last-child{border-bottom:none;}
-  .health-row .h-icon{
-    font-size:20px;
-    width:30px;
-    text-align:center;
-    flex-shrink:0;
-  }
-  .health-row .h-text{flex:1;}
-  .health-row .h-label{
-    font-size:11px;
-    font-weight:700;
-    text-transform:uppercase;
-    letter-spacing:0.5px;
-    color:#999;
-    display:block;
-  }
-  .health-row .h-value{
-    font-size:15px;
-    font-weight:700;
-    color:var(--ink);
-    display:block;
-    margin-top:1px;
-  }
-  .health-row .h-go{
-    color:#aaa;
-    font-size:18px;
-  }
-
-  .break-label{
-    position:absolute;
-    left:4px;right:4px;
-    text-align:center;
-    font-size:clamp(9.5px, 1.05vw, 11px);
-    color:#9a9586;
-    font-weight:600;
-    font-style:italic;
-    line-height:1.2;
-  }
 
   /* ============ DESKTOP / TABLET TIME GRID ============ */
   .grid-scroll{
@@ -214,6 +167,9 @@
     transform:translateY(-1px);
     box-shadow:0 3px 8px rgba(0,0,0,0.25);
   }
+  .class-block.is-custom{
+    border:2px dashed rgba(255,255,255,0.7);
+  }
   .class-block .time{
     font-weight:800;
     font-size:1.08em;
@@ -242,6 +198,7 @@
   .ger{background:var(--ger);}
   .jou{background:var(--jou);}
   .mth{background:var(--mth);}
+  .custom{background:var(--custom);}
 
   .scroll-hint{
     display:none;
@@ -294,12 +251,13 @@
     box-shadow:0 1px 4px rgba(0,0,0,0.08);
     cursor:pointer;
   }
-  .mobile-card:active{
-    background:#f5f3ee;
-  }
+  .mobile-card:active{background:#f5f3ee;}
   .mobile-card .stripe{
     width:7px;
     flex-shrink:0;
+  }
+  .mobile-card.is-custom .stripe{
+    background-image:repeating-linear-gradient(45deg, var(--custom), var(--custom) 4px, #fff 4px, #fff 8px);
   }
   .mobile-card .content{
     padding:12px 14px;
@@ -329,44 +287,8 @@
     margin-top:4px;
     display:block;
   }
-  .gap-chip{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    font-size:12px;
-    color:#8a8473;
-    font-weight:600;
-    padding:4px 4px 8px 21px;
-  }
-  .gap-chip::before{
-    content:"";
-    width:7px;height:7px;
-    border-radius:50%;
-    background:var(--gap-bg);
-    border:1px solid var(--line);
-    flex-shrink:0;
-    margin-left:-21px;
-  }
 
   /* ============ LEGEND / FOOTER ============ */
-  .legend{
-    margin-top:20px;
-    display:flex;
-    gap:18px;
-    flex-wrap:wrap;
-    font-size:clamp(13px, 1.6vw, 15px);
-  }
-  .legend span{
-    display:inline-flex;
-    align-items:center;
-    gap:7px;
-  }
-  .dot{
-    width:11px;height:11px;
-    border-radius:50%;
-    display:inline-block;
-    flex-shrink:0;
-  }
   footer{
     margin-top:14px;
     font-size:clamp(11px, 1.4vw, 13px);
@@ -375,11 +297,11 @@
 
   /* ============ BREAKPOINT: MOBILE ============ */
   @media (max-width: 720px){
-    .grid-scroll, .legend-desktop{display:none;}
+    .grid-scroll{display:none;}
     .mobile-list{display:block;}
   }
 
-  /* ============ MODAL ============ */
+  /* ============ MODALS ============ */
   .modal-overlay{
     display:none;
     position:fixed;
@@ -475,6 +397,103 @@
     border-radius:10px;
     display:block;
   }
+  .btn-delete{
+    margin-top:16px;
+    width:100%;
+    background:#fdf0ee;
+    color:#b5524a;
+    border:1px solid #f2cfc9;
+    border-radius:8px;
+    padding:11px;
+    font-size:14px;
+    font-weight:700;
+    cursor:pointer;
+  }
+  .btn-delete:hover{background:#fbe2de;}
+
+  .health-row{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:13px 0;
+    border-bottom:1px solid var(--line);
+    text-decoration:none;
+    color:var(--ink);
+  }
+  .health-row:last-child{border-bottom:none;}
+  .health-row .h-icon{
+    font-size:20px;
+    width:30px;
+    text-align:center;
+    flex-shrink:0;
+  }
+  .health-row .h-text{flex:1;}
+  .health-row .h-label{
+    font-size:11px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    color:#999;
+    display:block;
+  }
+  .health-row .h-value{
+    font-size:15px;
+    font-weight:700;
+    color:var(--ink);
+    display:block;
+    margin-top:1px;
+  }
+  .health-row .h-go{
+    color:#aaa;
+    font-size:18px;
+  }
+
+  /* Add-event form */
+  .form-row{margin-bottom:14px;}
+  .form-row label{
+    display:block;
+    font-size:11px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    color:#999;
+    margin-bottom:5px;
+  }
+  .form-row input, .form-row select{
+    width:100%;
+    padding:10px 12px;
+    border:1px solid var(--line);
+    border-radius:8px;
+    font-size:15px;
+    font-family:inherit;
+    background:#fff;
+    color:var(--ink);
+  }
+  .form-row-pair{
+    display:flex;
+    gap:10px;
+  }
+  .form-row-pair .form-row{flex:1;}
+  .btn-save{
+    width:100%;
+    background:var(--custom);
+    color:#fff;
+    border:none;
+    border-radius:8px;
+    padding:13px;
+    font-size:15px;
+    font-weight:700;
+    cursor:pointer;
+    margin-top:4px;
+  }
+  .btn-save:hover{opacity:0.92;}
+  .form-error{
+    color:#b5524a;
+    font-size:13px;
+    font-weight:600;
+    margin-bottom:10px;
+    display:none;
+  }
 </style>
 </head>
 <body>
@@ -498,6 +517,9 @@
     <button class="quick-link" onclick="openHealthModal()" type="button">
       <span class="pin">🏥</span> Health Services
     </button>
+    <button class="quick-link add-btn" onclick="openAddEventModal()" type="button">
+      <span class="pin">＋</span> Add Event
+    </button>
   </div>
 
   <!-- ============ DESKTOP / TABLET GRID ============ -->
@@ -520,17 +542,10 @@
   </div>
   <div class="scroll-hint">Swipe to see all days →</div>
 
-  <div class="legend legend-desktop">
-    <span><span class="dot" style="background:var(--rel)"></span>Religion</span>
-    <span><span class="dot" style="background:var(--ger)"></span>German</span>
-    <span><span class="dot" style="background:var(--jou)"></span>Journalism</span>
-    <span><span class="dot" style="background:var(--mth)"></span>Mathematics</span>
-  </div>
-
   <!-- ============ MOBILE STACKED LIST ============ -->
   <div class="mobile-list" id="mobileList"></div>
 
-  <footer>Schedule window: 8:00 AM – 2:15 PM &nbsp;|&nbsp; Tap any class for details &amp; map</footer>
+  <footer>Tap any class for details &amp; map &nbsp;|&nbsp; Add your own study sessions, work shifts, or activities anytime</footer>
 
 </div>
 
@@ -538,10 +553,16 @@
   <div class="modal-card" id="modalCard"></div>
 </div>
 
-<script>
-const START = 8 * 60;
-const END = 14 * 60 + 15;
-const TOTAL = END - START;
+<div class="modal-overlay" id="addModalOverlay">
+  <div class="modal-card" id="addModalCard"></div>
+</div>
+
+<script type="module">
+const START_FIXED = 8 * 60;
+const END_FIXED = 14 * 60 + 15;
+let START = START_FIXED;
+let END = END_FIXED;
+let TOTAL = END - START;
 
 function toMin(h, m, ampm){
   let hour = h % 12;
@@ -585,12 +606,6 @@ const classes = [
   {day:'wed', start: toMin(1,0,'PM'), end: toMin(2,15,'PM'), cls:'jou', course:'JOU 2304-01', title:'Multimedia Storytelling', meta:'Castellaw Communication Bldg, 255', time:'1:00 – 2:15 PM'},
 ];
 
-const dayNames = {mon:'Monday', tue:'Tuesday', wed:'Wednesday', thu:'Thursday', fri:'Friday'};
-const dayOrder = ['mon','tue','wed','thu','fri'];
-
-// Course descriptions paraphrased from the Baylor academic catalog (catalog.baylor.edu),
-// in our own words. JOU 2304 isn't in the standard catalog listing we could confirm,
-// so its blurb is a reasonable best guess based on the course title alone.
 const courseInfo = {
   'REL 1310-03': {
     days: 'Mon / Wed / Fri',
@@ -626,6 +641,56 @@ const courseInfo = {
   }
 };
 
+const dayNames = {mon:'Monday', tue:'Tuesday', wed:'Wednesday', thu:'Thursday', fri:'Friday'};
+const dayOrder = ['mon','tue','wed','thu','fri'];
+
+// ============ CUSTOM EVENTS (synced across devices via Firebase Firestore) ============
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCUMZoownxQTqmGuRtmxS9berUiqRBKf1c",
+  authDomain: "baylor-1b695.firebaseapp.com",
+  projectId: "baylor-1b695",
+  storageBucket: "baylor-1b695.firebasestorage.app",
+  messagingSenderId: "136346995775",
+  appId: "1:136346995775:web:6c56057df4a4569773bc8a",
+  measurementId: "G-3923RS38ML"
+};
+
+const fbApp = initializeApp(firebaseConfig);
+const db = getFirestore(fbApp);
+const eventsCol = collection(db, 'scheduleEvents');
+
+let customEvents = [];
+
+// Live sync: any add/delete from any device updates everyone's view automatically.
+onSnapshot(eventsCol, (snapshot) => {
+  customEvents = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+  renderAll();
+}, (err) => {
+  console.error('Firestore sync error:', err);
+});
+
+function getAllEvents(){
+  return classes.concat(customEvents);
+}
+
+function recomputeWindow(){
+  const all = getAllEvents();
+  let minStart = START_FIXED;
+  let maxEnd = END_FIXED;
+  all.forEach(e => {
+    if(e.start < minStart) minStart = Math.floor(e.start/60)*60;
+    if(e.end > maxEnd) maxEnd = Math.ceil(e.end/60)*60;
+  });
+  START = minStart;
+  END = maxEnd;
+  TOTAL = END - START;
+}
+
 function buildMapSrc(info){
   if(info.mapCoords){
     return `https://maps.google.com/maps?q=${info.mapCoords.lat},${info.mapCoords.lng}&z=17&output=embed`;
@@ -634,12 +699,18 @@ function buildMapSrc(info){
 }
 
 function openModal(c){
-  const info = courseInfo[c.course] || {};
+  const info = c.custom ? {} : (courseInfo[c.course] || {});
   const overlay = document.getElementById('modalOverlay');
   const card = document.getElementById('modalCard');
   const bannerColor = `var(--${c.cls})`;
   const descBlock = info.desc
     ? `<span class="m-desc-label">Course description${info.unconfirmed ? ' (best guess — unconfirmed)' : ''}</span><div class="m-desc">${info.desc}</div>`
+    : '';
+  const mapBlock = (info.mapQuery || info.mapCoords)
+    ? `<span class="m-desc-label">Building location</span><iframe class="modal-map" src="${buildMapSrc(info)}" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>`
+    : '';
+  const deleteBlock = c.custom
+    ? `<button class="btn-delete" onclick="deleteCustomEvent('${c.id}')">Delete this event</button>`
     : '';
   card.innerHTML = `
     <div class="modal-banner" style="background:${bannerColor}">
@@ -648,64 +719,143 @@ function openModal(c){
       <span class="m-days">${info.days || dayNames[c.day]}</span>
     </div>
     <div class="modal-body">
-      <div class="m-course">${c.course}</div>
+      ${c.course ? `<div class="m-course">${c.course}</div>` : ''}
       <div class="m-title">${c.title}</div>
-      <div class="m-room">📍 ${c.meta}</div>
+      ${c.meta ? `<div class="m-room">📍 ${c.meta}</div>` : ''}
       ${descBlock}
-      <span class="m-desc-label">Building location</span>
-      <iframe class="modal-map" src="${buildMapSrc(info)}" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      ${mapBlock}
+      ${deleteBlock}
     </div>
   `;
   overlay.classList.add('open');
 }
-
 function closeModal(){
   document.getElementById('modalOverlay').classList.remove('open');
 }
-
 document.getElementById('modalOverlay').addEventListener('click', (e) => {
   if(e.target.id === 'modalOverlay') closeModal();
 });
-document.addEventListener('keydown', (e) => {
-  if(e.key === 'Escape') closeModal();
+
+function deleteCustomEvent(id){
+  closeModal();
+  deleteDoc(doc(db, 'scheduleEvents', id)).catch(err => console.error('Delete failed:', err));
+  // UI updates automatically via the onSnapshot listener once the delete syncs.
+}
+
+// ============ ADD EVENT MODAL ============
+function openAddEventModal(){
+  const overlay = document.getElementById('addModalOverlay');
+  const card = document.getElementById('addModalCard');
+  card.innerHTML = `
+    <div class="modal-banner" style="background:var(--custom)">
+      <button class="modal-close" onclick="closeAddModal()" aria-label="Close">✕</button>
+      <span class="m-time">Add an Event</span>
+      <span class="m-days">Study sessions, work shifts, activities, anything</span>
+    </div>
+    <div class="modal-body">
+      <div class="form-error" id="addFormError">Please fill in a title, day, and valid start/end times.</div>
+      <div class="form-row">
+        <label for="ev-title">Title</label>
+        <input type="text" id="ev-title" placeholder="e.g. Study session, Work shift">
+      </div>
+      <div class="form-row">
+        <label for="ev-day">Day</label>
+        <select id="ev-day">
+          <option value="mon">Monday</option>
+          <option value="tue">Tuesday</option>
+          <option value="wed">Wednesday</option>
+          <option value="thu">Thursday</option>
+          <option value="fri">Friday</option>
+        </select>
+      </div>
+      <div class="form-row-pair">
+        <div class="form-row">
+          <label for="ev-start">Start time</label>
+          <input type="time" id="ev-start" value="15:00">
+        </div>
+        <div class="form-row">
+          <label for="ev-end">End time</label>
+          <input type="time" id="ev-end" value="16:00">
+        </div>
+      </div>
+      <div class="form-row">
+        <label for="ev-location">Location (optional)</label>
+        <input type="text" id="ev-location" placeholder="e.g. Moody Library, 2nd floor">
+      </div>
+      <button class="btn-save" onclick="saveNewEvent()">Add to Schedule</button>
+    </div>
+  `;
+  overlay.classList.add('open');
+}
+function closeAddModal(){
+  document.getElementById('addModalOverlay').classList.remove('open');
+}
+document.getElementById('addModalOverlay').addEventListener('click', (e) => {
+  if(e.target.id === 'addModalOverlay') closeAddModal();
 });
 
+function timeStrToMin(str){
+  if(!str) return null;
+  const parts = str.split(':');
+  if(parts.length !== 2) return null;
+  const h = parseInt(parts[0], 10);
+  const m = parseInt(parts[1], 10);
+  if(isNaN(h) || isNaN(m)) return null;
+  return h * 60 + m;
+}
+
+function saveNewEvent(){
+  const title = document.getElementById('ev-title').value.trim();
+  const day = document.getElementById('ev-day').value;
+  const startMin = timeStrToMin(document.getElementById('ev-start').value);
+  const endMin = timeStrToMin(document.getElementById('ev-end').value);
+  const location = document.getElementById('ev-location').value.trim();
+  const errEl = document.getElementById('addFormError');
+
+  if(!title || startMin === null || endMin === null || endMin <= startMin){
+    errEl.style.display = 'block';
+    return;
+  }
+  errEl.style.display = 'none';
+
+  const newEvent = {
+    day: day,
+    start: startMin,
+    end: endMin,
+    cls: 'custom',
+    custom: true,
+    title: title,
+    meta: location,
+    time: `${fmtMin(startMin)} – ${fmtMin(endMin)}`
+  };
+
+  closeAddModal();
+  addDoc(eventsCol, newEvent).catch(err => {
+    console.error('Save failed:', err);
+    alert('Could not save the event — check your internet connection and try again.');
+  });
+  // UI updates automatically via the onSnapshot listener once the save syncs.
+}
+
+// ============ RENDERING ============
+function clearChildren(el){ while(el.firstChild) el.removeChild(el.firstChild); }
+
 function renderGrid(){
-  classes.forEach(c => {
+  dayOrder.forEach(d => clearChildren(document.getElementById(d)));
+  clearChildren(document.getElementById('timeRow'));
+
+  const all = getAllEvents();
+  all.forEach(c => {
     const col = document.getElementById(c.day);
     const top = pct(c.start);
     const height = pct(c.end) - pct(c.start);
     const block = document.createElement('div');
-    block.className = 'class-block ' + c.cls;
+    block.className = 'class-block ' + c.cls + (c.custom ? ' is-custom' : '');
     block.style.top = top + '%';
     block.style.height = height + '%';
-    block.innerHTML = `<span class="time">${c.time}</span><span class="course">${c.course}</span><span class="title">${c.title}</span><span class="meta">${c.meta}</span>`;
+    block.innerHTML = `<span class="time">${c.time}</span>${c.course ? `<span class="course">${c.course}</span>` : ''}<span class="title">${c.title}</span>${c.meta ? `<span class="meta">${c.meta}</span>` : ''}`;
     block.addEventListener('click', () => openModal(c));
     col.appendChild(block);
-  });
-
-  // Break labels between classes, per day column
-  dayOrder.forEach(d => {
-    const dayClasses = classes.filter(c => c.day === d).sort((a,b) => a.start - b.start);
-    const col = document.getElementById(d);
-    for(let i = 0; i < dayClasses.length - 1; i++){
-      const gapStart = dayClasses[i].end;
-      const gapEnd = dayClasses[i+1].start;
-      const gapMin = gapEnd - gapStart;
-      if(gapMin > 0){
-        const label = document.createElement('div');
-        label.className = 'break-label';
-        const midTop = pct(gapStart);
-        const midHeight = pct(gapEnd) - pct(gapStart);
-        label.style.top = midTop + '%';
-        label.style.height = midHeight + '%';
-        label.style.display = 'flex';
-        label.style.alignItems = 'center';
-        label.style.justifyContent = 'center';
-        label.textContent = fmtDuration(gapMin) + ' break';
-        col.appendChild(label);
-      }
-    }
   });
 
   const timeRow = document.getElementById('timeRow');
@@ -731,25 +881,13 @@ function renderGrid(){
   }
 }
 
-function renderDayTotals(){
-  dayOrder.forEach(d => {
-    const dayClasses = classes.filter(c => c.day === d);
-    const headEl = document.getElementById('head-' + d);
-    if(dayClasses.length === 0) return;
-    const first = Math.min(...dayClasses.map(c => c.start));
-    const last = Math.max(...dayClasses.map(c => c.end));
-    const inClassMin = dayClasses.reduce((sum, c) => sum + (c.end - c.start), 0);
-    const sub = document.createElement('span');
-    sub.className = 'day-sub';
-    sub.textContent = `${fmtMin(first)}–${fmtMin(last)} · ${fmtDuration(inClassMin)} class`;
-    headEl.appendChild(sub);
-  });
-}
-
 function renderMobile(){
   const container = document.getElementById('mobileList');
+  clearChildren(container);
+  const all = getAllEvents();
+
   dayOrder.forEach(d => {
-    const dayClasses = classes.filter(c => c.day === d).sort((a,b) => a.start - b.start);
+    const dayClasses = all.filter(c => c.day === d).sort((a,b) => a.start - b.start);
     const group = document.createElement('div');
     group.className = 'day-group';
 
@@ -776,51 +914,63 @@ function renderMobile(){
       empty.textContent = 'No classes — free day';
       group.appendChild(empty);
     } else {
-      dayClasses.forEach((c, i) => {
+      dayClasses.forEach((c) => {
         const card = document.createElement('div');
-        card.className = 'mobile-card';
+        card.className = 'mobile-card' + (c.custom ? ' is-custom' : '');
         card.innerHTML = `<div class="stripe ${c.cls}"></div>
           <div class="content">
             <span class="time">${c.time}</span>
-            <span class="course">${c.course}</span>
+            ${c.course ? `<span class="course">${c.course}</span>` : ''}
             <span class="title">${c.title}</span>
-            <span class="room">${c.meta}</span>
+            ${c.meta ? `<span class="room">${c.meta}</span>` : ''}
           </div>`;
         card.addEventListener('click', () => openModal(c));
         group.appendChild(card);
-
-        if(i < dayClasses.length - 1){
-          const next = dayClasses[i+1];
-          const gapMin = next.start - c.end;
-          if(gapMin > 0){
-            const gap = document.createElement('div');
-            gap.className = 'gap-chip';
-            gap.textContent = `${fmtDuration(gapMin)} break`;
-            group.appendChild(gap);
-          }
-        }
       });
     }
     container.appendChild(group);
   });
 }
 
-renderGrid();
-renderMobile();
-renderDayTotals();
+function renderDayTotals(){
+  dayOrder.forEach(d => {
+    const headEl = document.getElementById('head-' + d);
+    clearChildren(headEl);
+    const dayName = document.createElement('span');
+    dayName.className = 'day-name';
+    dayName.textContent = dayNames[d].slice(0,3);
+    headEl.appendChild(dayName);
 
-// Map links: Apple Maps on iOS (where it opens natively), Google Maps everywhere else.
-const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); // iPadOS reports as Mac
-
-function setAutoMapLinks(){
-  document.querySelectorAll('.auto-map').forEach(el => {
-    if(isIOS){
-      el.href = `https://maps.apple.com/?q=${el.dataset.mapquery}`;
-    }
+    const dayClasses = getAllEvents().filter(c => c.day === d);
+    if(dayClasses.length === 0) return;
+    const first = Math.min(...dayClasses.map(c => c.start));
+    const last = Math.max(...dayClasses.map(c => c.end));
+    const inClassMin = dayClasses.reduce((sum, c) => sum + (c.end - c.start), 0);
+    const sub = document.createElement('span');
+    sub.className = 'day-sub';
+    sub.textContent = `${fmtMin(first)}–${fmtMin(last)} · ${fmtDuration(inClassMin)} class`;
+    headEl.appendChild(sub);
   });
 }
-setAutoMapLinks();
+
+function renderAll(){
+  recomputeWindow();
+  renderGrid();
+  renderMobile();
+  renderDayTotals();
+}
+
+renderAll();
+
+// ============ MAP LINKS: Apple Maps on iOS, Google Maps elsewhere ============
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+document.querySelectorAll('.auto-map').forEach(el => {
+  if(isIOS){
+    el.href = `https://maps.apple.com/?q=${el.dataset.mapquery}`;
+  }
+});
 
 function openHealthModal(){
   const overlay = document.getElementById('modalOverlay');
@@ -865,6 +1015,19 @@ function openHealthModal(){
   `;
   overlay.classList.add('open');
 }
+
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'Escape'){ closeModal(); closeAddModal(); }
+});
+
+// Inline onclick="..." attributes look these up on window — module scripts
+// don't expose top-level functions globally by default, so we do it explicitly.
+window.openHealthModal = openHealthModal;
+window.openAddEventModal = openAddEventModal;
+window.closeAddModal = closeAddModal;
+window.saveNewEvent = saveNewEvent;
+window.closeModal = closeModal;
+window.deleteCustomEvent = deleteCustomEvent;
 </script>
 </body>
 </html>
