@@ -692,6 +692,8 @@
     </div>
   </div>
 
+  <div class="week-banner" id="weekBanner" style="display:none;"></div>
+
   <!-- ============ DESKTOP / TABLET GRID ============ -->
   <div class="grid-scroll">
     <div class="grid">
@@ -828,6 +830,11 @@ const specialDates = [
 
 function specialsForDate(dateStr){
   return specialDates.filter(s => dateStr >= s.start && dateStr <= s.end);
+}
+function specialsForWeek(weekMonday){
+  const weekStart = ymd(weekMonday);
+  const weekEnd = ymd(addDays(weekMonday, 6));
+  return specialDates.filter(s => !(s.end < weekStart || s.start > weekEnd));
 }
 
 const classes = [
@@ -1236,6 +1243,24 @@ function renderWeekNav(weekInfo){
   document.getElementById('weekLabel').textContent = fmtWeekRange(currentWeekStart);
   document.getElementById('prevWeekBtn').disabled = currentWeekStart <= SEMESTER_FIRST_MONDAY;
   document.getElementById('nextWeekBtn').disabled = currentWeekStart >= SEMESTER_LAST_MONDAY;
+
+  // Highlight weekend-specific events (football games, Family Weekend, Homecoming, Bid Day, etc.)
+  // up top too, in addition to them showing inline on their actual Sat/Sun column below.
+  const weekSpecials = specialsForWeek(currentWeekStart);
+  const weekendOnes = weekSpecials.filter(s => {
+    const d = parseYMD(s.start);
+    return d.getDay() === 0 || d.getDay() === 6;
+  });
+  const bannerEl = document.getElementById('weekBanner');
+  if(weekendOnes.length > 0){
+    bannerEl.style.display = 'block';
+    bannerEl.innerHTML = weekendOnes.map(s => {
+      const d = parseYMD(s.start);
+      return `${s.icon} ${s.label} — ${WEEKDAY_ABBR[d.getDay()]}, ${fmtDateShort(d)}`;
+    }).join(' &nbsp;·&nbsp; ');
+  } else {
+    bannerEl.style.display = 'none';
+  }
 }
 
 function renderGrid(weekInfo){
